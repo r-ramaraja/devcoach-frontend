@@ -1,8 +1,5 @@
-import logo from "./logo.svg";
 import "./App.css";
-import MainMenu from "./components/main-nav";
-import ProjectMenu from "./components/project-menu";
-import { Outlet, useParams } from "react-router-dom";
+import { Outlet } from "react-router-dom";
 
 function App() {
   return (

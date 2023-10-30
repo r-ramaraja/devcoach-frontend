@@ -1,6 +1,6 @@
 import React from "react";
 import { Link, useParams } from "react-router-dom";
-import { AiFillHome, AiFillBug } from "react-icons/ai";
+import { AiFillHome } from "react-icons/ai";
 import { BsPenFill, BsCodeSlash, BsFillHouseDoorFill, BsBugFill } from 'react-icons/bs';
 
 const MainMenu = (props) => {
