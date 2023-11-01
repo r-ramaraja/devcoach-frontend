@@ -18,7 +18,7 @@ const TextArea = (props) =>{
   const handleInput = () => {
     const textarea = textareaRef.current;
     
-		if (textarea.scrollHeight > 160) {
+		if (textarea.scrollHeight > 6 * initialLineHeightRef.current) {
 			textarea.style.overflowY = "scroll";
 		}
 		else{
@@ -48,7 +48,7 @@ const TextArea = (props) =>{
 			}
 		>
 			<textarea
-				placeholder="Type your messege here..."
+				placeholder="Type your message here..."
 				ref={el => textareaRef.current = el}
 				className='resize-none w-full focus:border-none focus:outline-none bg-chat-accent'
 				onChange={e=>{

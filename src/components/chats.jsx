@@ -16,6 +16,7 @@ const Chats = (props) => {
       const gptResponse = data.filter((message) => message.type === "AI");
       
       setMessages((prevMessages) => [...prevMessages, ...gptResponse]);
+      console.log(gptResponse[0].text.split("\n").join("</br>"))
       setWaiting(false);
     });
 
@@ -60,7 +61,7 @@ const Chats = (props) => {
               <Avatar name={message.name} />
               <div className="flex flex-col w-2/3">
                 <div className="font-semibold">{message.name}</div>
-                <p className="text-sm ">{message.text}</p>
+                <p className="text-sm whitespace-pre-wrap">{message.text}</p>
               </div>
             </li>
           );
