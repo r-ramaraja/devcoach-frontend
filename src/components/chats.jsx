@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import socketIO from "socket.io-client";
 import Avatar from "../components/avatar";
+import TextArea from "./textarea";
 
 const Chats = (props) => {
   const [messages, setMessages] = useState([]);
@@ -13,9 +14,9 @@ const Chats = (props) => {
     socketRef.current = socketIO.connect("http://localhost:3001");
     socketRef.current.on("GPTResponse", (data) => {
       const gptResponse = data.filter((message) => message.type === "AI");
-      console.log(gptResponse);
-      console.log(data);
+      
       setMessages((prevMessages) => [...prevMessages, ...gptResponse]);
+      setWaiting(false);
     });
 
     return () => {
@@ -27,9 +28,7 @@ const Chats = (props) => {
     lastMessageRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  const handleSendMessage = async (e) => {
-    e.preventDefault();
-
+  const handleSendMessage = async () => {
     if (message.trim()) {
       const messageObject = {
         type: "human",
@@ -41,7 +40,7 @@ const Chats = (props) => {
       setMessages((prevMessages) => [...prevMessages, messageObject]);
       setWaiting(true);
       socketRef.current.emit("userMessage", messageObject);
-      setWaiting(false);
+      
       setMessage("");
     }
   };
@@ -56,7 +55,7 @@ const Chats = (props) => {
               ref={messages.length - 1 === index ? lastMessageRef : null}
               className={`${
                 index % 2 === 0 ? "bg-chat" : "bg-chat-accent"
-              } flex flex-row w-full px-11 py-5 justify-center items-start gap-3`}
+              } flex flex-row w-full px-11 py-5 justify-center items-start gap-3 break-words animate-fade-in`}
             >
               <Avatar name={message.name} />
               <div className="flex flex-col w-2/3">
@@ -66,42 +65,29 @@ const Chats = (props) => {
             </li>
           );
         })}
-        {/* Implement a loading indicator here instead of text message */}
+        {/* Implement a loading indicator here instead of text message */
+        /* I'll just use external library for that?  */
+        }
         {waiting && (
-          <li>
-            <p>Waiting for agents...</p>
+          <li className={`${
+            messages.length % 2 === 0 ? "bg-chat" : "bg-chat-accent"
+          } animate-pulse flex flex-row w-full px-11 py-5 justify-center items-start gap-3 break-words`}>
+            <div className="w-12 aspect-square bg-slate-300 rounded-full"></div>
+            <div className="flex flex-col w-2/3 gap-2 ">
+              <div className="w-16 h-4 bg-slate-300 rounded-full"></div>
+              <div className="w-full h-16 bg-slate-300 rounded-md"></div>
+            </div>
           </li>
         )}
       </ul>
 
-      <div className="sticky bottom-0 w-full bg-chat-accent flex flex-row just-around gap-1 shadow-xl">
-        <form className="w-full flex flex-row items-center" onSubmit={handleSendMessage}>
-          <input
-            placeholder="Type your message"
-            value={message}
-            onChange={(e) => {
-              setMessage(e.target.value);
-            }}
-            className="
-              h-8
-              padding-1
-              leading-4
-              flex-grow 
-              overflow-hidden 
-              resize-none 
-              px-4 
-              rounded-l-lg 
-              border-2
-            border-gray-300 
-              my-1
-              focus:outline-none 
-              focus:border-blue-500
-              "
-          />
-          <button className="h-8 px-4 bg-blue-500 text-white rounded-r-lg hover:bg-blue-700 focus:outline-none focus:bg-blue-700 transition-colors duration-300">
-            Send
-          </button>
-        </form>
+      <div className="sticky bottom-0 w-full bg-chat-accent flex flex-row just-around gap-1 shadow-xl border-t border-slate-300">
+        <TextArea 
+          value={message} 
+          onChange={(e)=>{setMessage(e.target.value)}} 
+          disabled={waiting} 
+          onSubmit={() => handleSendMessage()}
+        />
       </div>
     </div>
   );
