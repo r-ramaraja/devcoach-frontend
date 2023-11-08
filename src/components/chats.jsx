@@ -34,6 +34,11 @@ const Chats = (props) => {
         type: "human",
         name: "You",
         text: message,
+        time: new Date().toLocaleTimeString([], {
+          hour: "2-digit",
+          minute: "2-digit",
+          second: "2-digit",
+        }),
         id: `${socketRef.current.id}${Math.random()}`,
         socketID: socketRef.current.id,
       };
@@ -60,7 +65,9 @@ const Chats = (props) => {
               <Avatar name={message.name} />
               <div className="flex flex-col w-2/3">
                 <div className="font-semibold">
-                  {message.name === "You" ? message.name : `${message.name} (${message.role})`}
+                  {message.name === "You"
+                    ? `${message.name} ${message.time}`
+                    : `${message.name} (${message.role}) ${message.time}`}
                 </div>
                 <p className="text-sm whitespace-pre-wrap">{message.text}</p>
               </div>
