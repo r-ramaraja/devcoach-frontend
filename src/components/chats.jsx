@@ -14,9 +14,8 @@ const Chats = (props) => {
     socketRef.current = socketIO.connect("http://localhost:3001");
     socketRef.current.on("GPTResponse", (data) => {
       const gptResponse = data.filter((message) => message.type === "AI");
-      
+
       setMessages((prevMessages) => [...prevMessages, ...gptResponse]);
-      console.log(gptResponse[0].text.split("\n").join("</br>"))
       setWaiting(false);
     });
 
@@ -41,7 +40,7 @@ const Chats = (props) => {
       setMessages((prevMessages) => [...prevMessages, messageObject]);
       setWaiting(true);
       socketRef.current.emit("userMessage", messageObject);
-      
+
       setMessage("");
     }
   };
@@ -60,19 +59,20 @@ const Chats = (props) => {
             >
               <Avatar name={message.name} />
               <div className="flex flex-col w-2/3">
-                <div className="font-semibold">{message.name}</div>
+                <div className="font-semibold">
+                  {message.name === "You" ? message.name : `${message.name} (${message.role})`}
+                </div>
                 <p className="text-sm whitespace-pre-wrap">{message.text}</p>
               </div>
             </li>
           );
         })}
-        {/* Implement a loading indicator here instead of text message */
-        /* I'll just use external library for that?  */
-        }
         {waiting && (
-          <li className={`${
-            messages.length % 2 === 0 ? "bg-chat" : "bg-chat-accent"
-          } animate-pulse flex flex-row w-full px-11 py-5 justify-center items-start gap-3 break-words`}>
+          <li
+            className={`${
+              messages.length % 2 === 0 ? "bg-chat" : "bg-chat-accent"
+            } animate-pulse flex flex-row w-full px-11 py-5 justify-center items-start gap-3 break-words`}
+          >
             <div className="w-12 aspect-square bg-slate-300 rounded-full"></div>
             <div className="flex flex-col w-2/3 gap-2 ">
               <div className="w-16 h-4 bg-slate-300 rounded-full"></div>
@@ -83,10 +83,12 @@ const Chats = (props) => {
       </ul>
 
       <div className="sticky bottom-0 w-full bg-chat-accent flex flex-row just-around gap-1 shadow-xl border-t border-slate-300">
-        <TextArea 
-          value={message} 
-          onChange={(e)=>{setMessage(e.target.value)}} 
-          disabled={waiting} 
+        <TextArea
+          value={message}
+          onChange={(e) => {
+            setMessage(e.target.value);
+          }}
+          disabled={waiting}
           onSubmit={() => handleSendMessage()}
         />
       </div>
