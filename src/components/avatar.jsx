@@ -8,17 +8,17 @@ const Avatar = (props) => {
       color: "bg-yellow-500	",
     },
     {
-      name: "stakeholder1",
+      name: "Tom",
       link: "https://api.dicebear.com/7.x/miniavs/svg?seed=john",
       color: "bg-green-500",
     },
     {
-      name: "developer",
+      name: "Sam",
       link: "https://api.dicebear.com/7.x/miniavs/svg?seed=jennie",
       color: "bg-cyan-500",
     },
     {
-      name: "teamlead",
+      name: "Henry",
       link: "https://api.dicebear.com/7.x/miniavs/svg?seed=michelle",
       color: "bg-rose-500",
     },
