@@ -10,6 +10,9 @@ module.exports = {
         chat: "#F6F7F3",
         "chat-accent": "#F0F1E5",
       },
+      height: {
+        540: "540px",
+      },
       animation: {
         "fade-in": "fade-in 1s ease-in-out",
       },

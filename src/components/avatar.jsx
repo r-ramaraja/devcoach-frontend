@@ -4,7 +4,7 @@ const Avatar = (props) => {
   const avatarList = [
     {
       name: "Sarah",
-      link: "https://api.dicebear.com/7.x/miniavs/svg?seed=lisa",
+      link: "https://api.dicebear.com/7.x/miniavs/svg?seed=sarah",
       color: "bg-yellow-500	",
     },
     {

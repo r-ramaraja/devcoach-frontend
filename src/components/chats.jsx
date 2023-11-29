@@ -2,13 +2,22 @@ import React, { useEffect, useRef, useState } from "react";
 import socketIO from "socket.io-client";
 import Avatar from "../components/avatar";
 import TextArea from "./textarea";
+import Editor from "./editor";
+import { useParams } from "react-router-dom";
 
 const Chats = (props) => {
-  const [messages, setMessages] = useState([]);
+  const [messages, setMessages] = useState([{
+    type: "ai",
+    name: "Sarah",
+    text: "Hi! Welcome to DevCoach! I'm your AI assistant. How can I help you?",
+    id: `${Math.random()}`,
+  }]);
   const [message, setMessage] = useState("");
   const socketRef = useRef(null);
   const lastMessageRef = useRef(null);
   const [waiting, setWaiting] = useState(false);
+  const urlParams = useParams();
+  
 
   useEffect(() => {
     socketRef.current = socketIO.connect("http://localhost:3001");
@@ -19,7 +28,6 @@ const Chats = (props) => {
       console.log(gptResponse[0].text.split("\n").join("</br>"))
       setWaiting(false);
     });
-
     return () => {
       socketRef.current.disconnect();
     };
@@ -48,7 +56,14 @@ const Chats = (props) => {
 
   return (
     <div className="h-full w-full flex flex-col justify-center items-center">
-      <ul className=" w-full overflow-y-auto grow">
+      {urlParams.phaseId==="develop" && 
+        <div className=" w-full h-2/3 flex flex-row overflow-auto ">
+          <div className="w-full h-full">
+            <Editor />
+          </div>
+        </div>
+      }
+      <ul className={` w-full overflow-y-auto grow` + (urlParams.phaseId==="develop" ? ` h-1/3`:``)} >
         {messages.map((message, index) => {
           return (
             <li
@@ -81,7 +96,8 @@ const Chats = (props) => {
           </li>
         )}
       </ul>
-
+      
+      
       <div className="sticky bottom-0 w-full bg-chat-accent flex flex-row just-around gap-1 shadow-xl border-t border-slate-300">
         <TextArea 
           value={message} 
