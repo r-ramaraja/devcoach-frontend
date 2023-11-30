@@ -52,8 +52,10 @@ const Chats = (props) => {
       setWaiting(false);
     });
 
-    socketRef.current.emit("developPhaseInitialMessage");
-    setWaiting(true);
+    if (urlParams.phaseId === "develop") {
+      socketRef.current.emit("developPhaseInitialMessage");
+      setWaiting(true);
+    }
 
     return () => {
       socketRef.current.disconnect();
