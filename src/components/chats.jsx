@@ -6,27 +6,55 @@ import Editor from "./editor";
 import { useParams } from "react-router-dom";
 
 const Chats = (props) => {
-  const [messages, setMessages] = useState([{
-    type: "ai",
-    name: "Sarah",
-    text: "Hi! Welcome to DevCoach! I'm your AI assistant. How can I help you?",
-    id: `${Math.random()}`,
-  }]);
   const [message, setMessage] = useState("");
+  const [code, setCode] = useState('print("Hello World!")');
   const socketRef = useRef(null);
   const lastMessageRef = useRef(null);
   const [waiting, setWaiting] = useState(false);
   const urlParams = useParams();
-  
+
+  const intialMessage =
+    urlParams.phaseId === "develop"
+      ? {
+          type: "AI",
+          name: "Sam",
+          role: "Senior Developer",
+          text: "Hi! Welcome to the Develop phase of Software Engineering! I'm the Senior Developer of the team. I am here to work together, as a pair programmer, on the following user story.",
+          time: new Date().toLocaleTimeString([], {
+            hour: "2-digit",
+            minute: "2-digit",
+            second: "2-digit",
+          }),
+          id: `${Math.random()}`,
+        }
+      : {
+          type: "AI",
+          name: "Tom",
+          role: "Team Lead",
+          text: "Hi! Welcome to the Design phase of Software Engineering! Join me, Sam (Senior Developer), and Sarah (Product Manager) as we work together to design a solution for a Movie Review System.",
+          time: new Date().toLocaleTimeString([], {
+            hour: "2-digit",
+            minute: "2-digit",
+            second: "2-digit",
+          }),
+          id: `${Math.random()}`,
+        };
+
+  const [messages, setMessages] = useState([intialMessage]);
 
   useEffect(() => {
     socketRef.current = socketIO.connect("http://localhost:3001");
+
     socketRef.current.on("GPTResponse", (data) => {
       const gptResponse = data.filter((message) => message.type === "AI");
 
       setMessages((prevMessages) => [...prevMessages, ...gptResponse]);
       setWaiting(false);
     });
+
+    socketRef.current.emit("developPhaseInitialMessage");
+    setWaiting(true);
+
     return () => {
       socketRef.current.disconnect();
     };
@@ -47,9 +75,13 @@ const Chats = (props) => {
           minute: "2-digit",
           second: "2-digit",
         }),
+        phase: urlParams.phaseId,
         id: `${socketRef.current.id}${Math.random()}`,
         socketID: socketRef.current.id,
       };
+      if (urlParams.phaseId === "develop") {
+        messageObject.code = code;
+      }
       setMessages((prevMessages) => [...prevMessages, messageObject]);
       setWaiting(true);
       socketRef.current.emit("userMessage", messageObject);
@@ -60,14 +92,18 @@ const Chats = (props) => {
 
   return (
     <div className="h-full w-full flex flex-col justify-center items-center">
-      {urlParams.phaseId==="develop" && 
+      {urlParams.phaseId === "develop" && (
         <div className=" w-full h-2/3 flex flex-row overflow-auto ">
           <div className="w-full h-full">
-            <Editor />
+            <Editor code={code} setCode={setCode} />
           </div>
         </div>
-      }
-      <ul className={` w-full overflow-y-auto grow` + (urlParams.phaseId==="develop" ? ` h-1/3`:``)} >
+      )}
+      <ul
+        className={
+          ` w-full overflow-y-auto grow` + (urlParams.phaseId === "develop" ? ` h-1/3` : ``)
+        }
+      >
         {messages.map((message, index) => {
           return (
             <li
@@ -103,8 +139,7 @@ const Chats = (props) => {
           </li>
         )}
       </ul>
-      
-      
+
       <div className="sticky bottom-0 w-full bg-chat-accent flex flex-row just-around gap-1 shadow-xl border-t border-slate-300">
         <TextArea
           value={message}
