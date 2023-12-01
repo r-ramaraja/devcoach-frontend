@@ -2,7 +2,9 @@ import React, { useState } from "react";
 import CodeMirror from "@uiw/react-codemirror";
 import { python } from "@codemirror/lang-python";
 import { EditorView } from "@codemirror/view";
+import { okaidia } from '@uiw/codemirror-theme-okaidia';
 import Terminal from "./terminal";
+
 const extensions = [python()];
 
 export default function Editor({ code, setCode }) {
@@ -12,7 +14,7 @@ export default function Editor({ code, setCode }) {
     setCode(value);
   }, []);
   return (
-    <div className="flex flex-row w-full h-full max-h-full">
+    <div className="flex flex-col w-full h-full max-h-full">
       <CodeMirror
         value={code}
         height="100%"
@@ -27,11 +29,12 @@ export default function Editor({ code, setCode }) {
             ".cm-scroller": { overflow: "auto" },
           }),
         ]}
+        theme={okaidia}
         onChange={onChange}
         basicSetup={true}
-        style={{ width: "60%", height: "100%", maxHeight: "100%", overflowY: "auto" }}
+        style={{ width: "100%", height: "60%", maxHeight: "100%", overflowY: "auto" }}
       />
-      <div className="w-2/5 h-full">
+      <div className="w-full h-2/5 border-2 border-blue-200">
         <Terminal code={code} />
       </div>
     </div>

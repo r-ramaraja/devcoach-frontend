@@ -5,10 +5,8 @@ import "./index.css";
 import App from "./App";
 import ErrorPage from "./views/error-page";
 import HomePage from "./views/home-page";
-import ChatsPage from "./views/chats-page";
 import Chats from "./components/chats";
 import { projectsLoader } from "./routes/phaseLoader";
-import { chatLoader } from "./routes/chatLoader";
 
 const router = createBrowserRouter([
   {
@@ -23,15 +21,8 @@ const router = createBrowserRouter([
       },
       {
         path: "phase/:phaseId",
-        element: <ChatsPage />,
+        element: <Chats />,
         loader: projectsLoader,
-        children: [
-          {
-            path: "chat/:chatId",
-            element: <Chats />,
-            loader: chatLoader,
-          },
-        ],
       },
     ],
   },
