@@ -1,6 +1,4 @@
 export async function chatLoader({ params }) {
-  console.log(params);
-
   const chats = [
     {
       id: `${Math.random()}`,

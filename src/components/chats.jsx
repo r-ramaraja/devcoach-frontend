@@ -12,7 +12,7 @@ const Chats = (props) => {
   const lastMessageRef = useRef(null);
   const [waiting, setWaiting] = useState(false);
   const urlParams = useParams();
-  
+
   const intialMessage =
     urlParams.phaseId === "develop"
       ? {
@@ -40,22 +40,16 @@ const Chats = (props) => {
           id: `${Math.random()}`,
         };
 
-
-  
-
-
   const [messages, setMessages] = useState([intialMessage]);
 
-  //Reset initial message when phase changes; I'm not completely sure whether we should send something to the backend here. 
-  //I think we probably should, but I'm not sure. 
   useEffect(() => {
-    console.log(urlParams.phaseId);
     setMessages([intialMessage]);
-  }, [urlParams.phaseId]);
-
-  useEffect(() => {
     socketRef.current = socketIO.connect("http://localhost:3001");
 
+    if (urlParams.phaseId === "develop") {
+      socketRef.current.emit("developPhaseInitialMessage");
+      setWaiting(true);
+    }
     socketRef.current.on("GPTResponse", (data) => {
       const gptResponse = data.filter((message) => message.type === "AI");
 
@@ -63,15 +57,10 @@ const Chats = (props) => {
       setWaiting(false);
     });
 
-    if (urlParams.phaseId === "develop") {
-      socketRef.current.emit("developPhaseInitialMessage");
-      setWaiting(true);
-    }
-
     return () => {
       socketRef.current.disconnect();
     };
-  }, []);
+  }, [urlParams.phaseId]);
 
   useEffect(() => {
     lastMessageRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -105,7 +94,11 @@ const Chats = (props) => {
 
   return (
     <div className="h-full w-full flex flex-row justify-center items-center">
-      <div className={`h-full flex flex-col justify-center items-center ${urlParams.phaseId==="develop" ? "w-1/3" : "w-full"}`}>
+      <div
+        className={`h-full flex flex-col justify-center items-center ${
+          urlParams.phaseId === "develop" ? "w-1/3" : "w-full"
+        }`}
+      >
         <ul
           className={
             ` w-full overflow-y-auto grow` + (urlParams.phaseId === "develop" ? ` h-1/3` : ``)
@@ -145,8 +138,8 @@ const Chats = (props) => {
               </div>
             </li>
           )}
-        </ul> {/*List of messages */}
-
+        </ul>{" "}
+        {/*List of messages */}
         <div className="sticky bottom-0 w-full bg-chat-accent flex flex-row just-around gap-1 shadow-xl border-t border-slate-300">
           <TextArea
             value={message}
@@ -156,7 +149,8 @@ const Chats = (props) => {
             disabled={waiting}
             onSubmit={() => handleSendMessage()}
           />
-        </div>{/*Input box */}
+        </div>
+        {/*Input box */}
       </div>
 
       {urlParams.phaseId === "develop" && (

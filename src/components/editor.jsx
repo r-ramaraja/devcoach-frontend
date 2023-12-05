@@ -1,8 +1,8 @@
-import React, { useState } from "react";
+import React from "react";
 import CodeMirror from "@uiw/react-codemirror";
 import { python } from "@codemirror/lang-python";
 import { EditorView } from "@codemirror/view";
-import { okaidia } from '@uiw/codemirror-theme-okaidia';
+import { okaidia } from "@uiw/codemirror-theme-okaidia";
 import Terminal from "./terminal";
 
 const extensions = [python()];
